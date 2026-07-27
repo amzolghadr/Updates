@@ -28,6 +28,7 @@ type App struct {
 type Config struct {
 	TelegramToken string `json:"telegram_token"`
 	ChatID        string `json:"chat_id"`
+	GitHubToken   string `json:"github_token,omitempty"` // optional: raises GitHub API rate limit from 60/hr to 5000/hr
 	Apps          []App  `json:"apps"`
 }
 
@@ -55,13 +56,16 @@ func saveConfig(path string, cfg *Config) error {
 
 var httpClient = &http.Client{Timeout: 20 * time.Second}
 
-func fetch(u string) ([]byte, error) {
+func fetch(u string, githubToken string) ([]byte, error) {
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err
 	}
 	// Farsroid (and some CDNs) block requests with no browser-like User-Agent.
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Mobile Safari/537.36")
+	if githubToken != "" {
+		req.Header.Set("Authorization", "Bearer "+githubToken)
+	}
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -84,7 +88,7 @@ type ghRelease struct {
 	HTMLURL string `json:"html_url"`
 }
 
-func checkGithub(repo, channel string) (version, link string, err error) {
+func checkGithub(repo, channel, githubToken string) (version, link string, err error) {
 	var rel ghRelease
 
 	if channel == "alpha" {
@@ -93,7 +97,7 @@ func checkGithub(repo, channel string) (version, link string, err error) {
 		// need the full list instead, which GitHub returns newest-first
 		// regardless of prerelease status.
 		api := fmt.Sprintf("https://api.github.com/repos/%s/releases", repo)
-		body, err := fetch(api)
+		body, err := fetch(api, githubToken)
 		if err != nil {
 			return "", "", err
 		}
@@ -107,7 +111,7 @@ func checkGithub(repo, channel string) (version, link string, err error) {
 		rel = rels[0]
 	} else {
 		api := fmt.Sprintf("https://api.github.com/repos/%s/releases/latest", repo)
-		body, err := fetch(api)
+		body, err := fetch(api, githubToken)
 		if err != nil {
 			return "", "", err
 		}
@@ -158,7 +162,7 @@ var (
 )
 
 func checkFarsroid(pageURL string) (version, link string, err error) {
-	body, err := fetch(pageURL)
+	body, err := fetch(pageURL, "")
 	if err != nil {
 		return "", "", err
 	}
@@ -238,7 +242,7 @@ func main() {
 
 		switch app.Source {
 		case "github":
-			version, link, checkErr = checkGithub(app.Repo, app.Channel)
+			version, link, checkErr = checkGithub(app.Repo, app.Channel, cfg.GitHubToken)
 		case "farsroid":
 			version, link, checkErr = checkFarsroid(app.URL)
 		default:

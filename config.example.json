@@ -1,6 +1,7 @@
 {
   "telegram_token": "123456:ABC-your-bot-token",
   "chat_id": "your-chat-id",
+  "github_token": "",
   "apps": [
     {
       "name": "v2rayNG",
