@@ -1,6 +1,6 @@
 {
-  "telegram_token": "123456:ABC-your-bot-token",
-  "chat_id": "your-chat-id",
+  "telegram_token": "8770582248:AAEcj_YA-OUDJEklAW6_7W2fwt1GvFgKqUY",
+  "chat_id": "1427066882",
   "apps": [
     { "name": "Deezer", "source": "farsroid", "url": "https://www.farsroid.com/download-deezer-android/", "last_version": "", "last_link": "" },
     { "name": "Musixmatch", "source": "farsroid", "url": "https://www.farsroid.com/musixmatch-music-lyrics-android/", "last_version": "", "last_link": "" },
