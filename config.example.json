@@ -1,0 +1,27 @@
+{
+  "telegram_token": "123456:ABC-your-bot-token",
+  "chat_id": "your-chat-id",
+  "apps": [
+    {
+      "name": "v2rayNG",
+      "source": "github",
+      "repo": "2dust/v2rayNG",
+      "last_version": "",
+      "last_link": ""
+    },
+    {
+      "name": "sing-box",
+      "source": "github",
+      "repo": "SagerNet/sing-box",
+      "last_version": "",
+      "last_link": ""
+    },
+    {
+      "name": "MX Player",
+      "source": "farsroid",
+      "url": "https://www.farsroid.com/mx-player/",
+      "last_version": "",
+      "last_link": ""
+    }
+  ]
+}
